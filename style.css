@@ -1,0 +1,18 @@
+#maze{
+    border: 1px solid red;
+}
+
+#maze:after{
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.cell{
+    float: left;
+    border: 1px solid blue;
+    width: 100px;
+    height: 100px;
+    box-sizing: border-box;
+
+}
