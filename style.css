@@ -1,18 +1,26 @@
-#maze{
+.maze{
     border: 1px solid red;
 }
 
-#maze:after{
+.maze:after{
     content: '';
     display: block;
     clear: both;
 }
 
-.cell{
+.cells{
     float: left;
-    border: 1px solid blue;
+    border-color: blue;
+    border-width: 1px;
     width: 100px;
     height: 100px;
     box-sizing: border-box;
+}
 
+.cells[data-down="true"]{
+    border-bottom-style: solid;
+}
+
+.cells[data-right="true"]{
+    border-right-style: solid;
 }
