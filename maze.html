@@ -7,7 +7,17 @@
 </head>
 <body>
 <div id="maze"></div>
-<button id="create">Create file</button> <a download="info.txt" id="downloadlink" style="display: none">Download</a>
+<div>
+    <button id="create">Generate JSON</button> <a id="downloadlink" style="display: none">Download</a>
+</div>
+<div>
+    <input type="file" name="fileToUpload" id="fileToUpload">
+    <span class="readBytesButtons">
+        <button>Generate Maze</button>
+    </span>
+</div>
+<div id="byte_range"></div>
+<div id="byte_content"></div>
 <script src="jquery-2.2.4.min.js" type="text/javascript"></script>
 <!--<script src="maze.js" type="text/javascript"></script>-->
 <script type="text/javascript">
@@ -91,7 +101,7 @@
             }
         }
 
-        generateMaze(4,4);
+        generateMaze(20,20);
         loop();
 
         function loop(){
@@ -121,7 +131,13 @@
 
                 cells.push(cell);
             });
+            var size = {
+                "width": width, 
+                "height": height
+            };
             $.extend(json.cells, cells);
+            $.extend(json, size);
+            
             json = JSON.stringify(json);
 
             var create = document.getElementById('create');
@@ -134,8 +150,64 @@
                     link.download = "backup.json";
                     link.style.display = 'block';
             }, false);
-
         }
+
+        // $("#upload_json").submit(function( event ) {
+ 
+        //   // Stop form from submitting normally
+        //   event.preventDefault();
+         
+        //   // Get some values from elements on the page:
+        //   var $form = $( this ),
+        //     term = $form.find( "input[name='fileToUpload']" ).val(),
+        //     url = $form.attr( "action" );
+        //     console.log(url);
+
+
+        //   $.getJSON(url, function( data ) {
+        //     console.log(data);
+        //       var items = [];
+        //       $.each( data, function( key, val ) {
+        //         items.push( "<li id='" + key + "'>" + val + "</li>" );
+        //       });
+             
+        //       $( "<ul/>", {
+        //         "class": "my-new-list",
+        //         html: items.join( "" )
+        //       }).appendTo( "body" );
+        //     });
+        // });
+
+        function readBlob() {
+
+            var files = document.getElementById('fileToUpload').files;
+            if (!files.length) {
+              alert('Please select a file!');
+              return;
+            }
+
+            var file = files[0];
+            var start = 0;
+            var stop = file.size - 1;
+
+            var reader = new FileReader();
+
+            // If we use onloadend, we need to check the readyState.
+            reader.onloadend = function(evt) {
+              if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                var content = evt.target.result;
+                return content;
+              }
+            };
+        }
+          
+        document.querySelector('.readBytesButtons').addEventListener('click', function(evt) {
+            if (evt.target.tagName.toLowerCase() == 'button') {
+              var file = readBlob();
+              console.log(file);
+              generateMaze(file.width, file.height);
+            }
+        }, false);
     });
 </script>
 </body>
