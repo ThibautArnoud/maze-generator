@@ -16,15 +16,17 @@
         var cells;
         var width = 0;
         var height = 0;
-        var direction = [1, -1, 10, -10];
+        var direction = [];
 
         function generateMaze(wth, hgt){
 
             width = wth;
             height = hgt;
 
-            maze.css('width', width*100);
-            maze.css('height', height*100);
+            direction = [1, -1, width, -width];
+
+            maze.css('width', width*40);
+            maze.css('height', height*40);
 
             for(var i = 0; i < width*height; i++){
                 $('<div class="cells" data-down="false" data-right="false" data-value="'+i+'">'+i+'</div>').appendTo(maze);
@@ -39,8 +41,8 @@
 
             var cell = cells[randomNumber];
 
-            if ((randomNumber < 10 && randomDir == -10)
-                    || (randomNumber > cells.length - width && randomDir == 10)
+            if ((randomNumber < width && randomDir == -width)
+                    || (randomNumber > cells.length - width && randomDir == width)
                     || (randomNumber == cells.length - 1 && randomDir == 1)
                     || (randomNumber == 0 && randomDir == -1)
                     || (randomNumber%width == 0 && randomDir == -1)
@@ -60,13 +62,13 @@
                         case -1:
                             $(nextCell).attr('data-right', 'true');
                             break;
-                        case -10:
+                        case -width:
                             $(nextCell).attr('data-down', 'true');
                             break;
                         case 1:
                             $(cell).attr('data-right', 'true');
                             break;
-                        case 10:
+                        case width:
                             $(cell).attr('data-down', 'true');
                             break;
                     }
@@ -80,18 +82,19 @@
                     }
             }
 
-            console.log('SELECT');
-
-            if($('.cells[data-value="0"]').length == 100){
+            if($('.cells[data-value="0"]').length == width*height){
                 stopInterval();
+                console.log($('.cells'));
+                $('.cells').html('');
+                generateJson();
             }
         }
 
-        generateMaze(10,10);
+        generateMaze(4,4);
         loop();
 
         function loop(){
-          intervalId = setInterval(selectCell, 250);
+          intervalId = setInterval(selectCell, 10);
         }
 
         function stopInterval(){
@@ -100,6 +103,21 @@
 
         function getRandomArbitrary(min, max) {
             return Math.random() * (max - min) + min;
+        }
+
+        function generateJson(){
+            console.log('{');
+            console.log('  "cases":[');
+            $('.cells').each(function(){
+                console.log('  {');
+                console.log('    "down":'+$(this).attr("data-down")+',');
+                console.log('    "right":'+$(this).attr("data-right")+',');
+                console.log('  },');
+            });
+            console.log('  ]');
+            console.log('  "height":'+height+',');
+            console.log('  "width":'+width);
+            console.log('}');
         }
     });
 </script>
