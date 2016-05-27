@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="style2.css" type="text/css">
+    <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
 <div id="maze"></div>
+<button id="create">Create file</button> <a download="info.txt" id="downloadlink" style="display: none">Download</a>
 <script src="jquery-2.2.4.min.js" type="text/javascript"></script>
 <!--<script src="maze.js" type="text/javascript"></script>-->
 <script type="text/javascript">
@@ -84,7 +85,7 @@
 
             if($('.cells[data-value="0"]').length == width*height){
                 stopInterval();
-                console.log($('.cells'));
+                //console.log($('.cells'));
                 $('.cells').html('');
                 generateJson();
             }
@@ -106,19 +107,67 @@
         }
 
         function generateJson(){
-            console.log('{');
-            console.log('  "cases":[');
+            var json = { "cells" : []};
+            var cells = [];
+
             $('.cells').each(function(){
-                console.log('  {');
-                console.log('    "down":'+$(this).attr("data-down")+',');
-                console.log('    "right":'+$(this).attr("data-right")+',');
-                console.log('  },');
+                var down = JSON.parse($(this).attr("data-down"));
+                var right = JSON.parse($(this).attr("data-right"));
+
+                var cell = {
+                    "down": down, 
+                    "right": right
+                };
+
+                cells.push(cell);
             });
-            console.log('  ]');
-            console.log('  "height":'+height+',');
-            console.log('  "width":'+width);
-            console.log('}');
+            $.extend(json.cells, cells);
+            json = JSON.stringify(json);
+
+            var create = document.getElementById('create');
+            var data = new Blob([json], {type: 'application/json'});
+            var textFile = window.URL.createObjectURL(data);
+
+            create.addEventListener('click', function () {
+                var link = document.getElementById('downloadlink');
+                    link.href = textFile;
+                    link.download = "backup.json";
+                    link.style.display = 'block';
+            }, false);
+
         }
+
+        // function generateJsonFile() {
+        //     // var textFile;
+        //       // makeTextFile = function (text) {
+        //       //   var data = new Blob([text], {type: 'application/json'});
+
+        //       //   // If we are replacing a previously generated file we need to
+        //       //   // manually revoke the object URL to avoid memory leaks.
+        //       //   if (textFile !== null) {
+        //       //     window.URL.revokeObjectURL(textFile);
+        //       //   }
+
+        //       //   textFile = window.URL.createObjectURL(data);
+
+        //       //   return textFile;
+        //       // };
+
+        //     var create = document.getElementById('create');
+        //     console.log(generateJson());
+        //     var textbox = generateJson();
+        //     console.log(textbox);
+        //     var data = new Blob([textbox], {type: 'application/json'});
+        //     var textFile = URL.createObjectURL(data);
+
+
+        //       create.addEventListener('click', function () {
+        //         var link = document.getElementById('downloadlink');
+        //         link.href = textFile;
+        //         link.download = "backup.json";
+        //         link.style.display = 'block';
+        //       }, false);
+        // };
     });
 </script>
 </body>
