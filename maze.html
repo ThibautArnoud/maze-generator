@@ -6,8 +6,23 @@
     <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
+<div>
+    <button id="random">Generate Random Maze</button>
+</div>
+
+<div>
+    <input type="file" name="fileToUpload" id="fileToUpload">
+    <span class="readBytesButtons">
+        <button>Generate Uploaded Maze</button>
+    </span>
+</div>
 <div id="maze"></div>
-<button id="create">Create file</button> <a download="info.txt" id="downloadlink" style="display: none">Download</a>
+<div class="json_btn">
+    <button id="create">Generate JSON</button> <a id="downloadlink" style="display: none">Download</a>
+</div>
+<div id="byte_range"></div>
+<div id="byte_content"></div>
+<div id="fileContents"></div>
 <script src="jquery-2.2.4.min.js" type="text/javascript"></script>
 <!--<script src="maze.js" type="text/javascript"></script>-->
 <script type="text/javascript">
@@ -58,7 +73,6 @@
 
                 if(cellValue != nextCellValue){
                     $(cell).addClass('check');
-                    console.log(randomDir);
                     switch (randomDir){
                         case -1:
                             $(nextCell).attr('data-right', 'true');
@@ -91,8 +105,21 @@
             }
         }
 
-        generateMaze(4,4);
-        loop();
+        document.getElementById('random').addEventListener('click', function(evt) {
+            $(".json_btn").hide();
+            $("#maze").html("");
+            generateMaze(15,15);
+            loop();
+            $(".json_btn").show();
+        }, false);
+
+        document.querySelector('.readBytesButtons').addEventListener('click', function(evt) {
+            if (evt.target.tagName.toLowerCase() == 'button') {
+              var file = readBlob();
+              console.log(file);
+              //generateMaze(file.width, file.height);
+            }
+        }, false);
 
         function loop(){
           intervalId = setInterval(selectCell, 10);
@@ -121,7 +148,13 @@
 
                 cells.push(cell);
             });
+            var size = {
+                "width": width, 
+                "height": height
+            };
             $.extend(json.cells, cells);
+            $.extend(json, size);
+            
             json = JSON.stringify(json);
 
             var create = document.getElementById('create');
@@ -134,7 +167,48 @@
                     link.download = "backup.json";
                     link.style.display = 'block';
             }, false);
+        }
 
+        function readBlob() {
+
+            var files = document.getElementById('fileToUpload').files;
+            console.log(files);
+            if (!files.length) {
+              alert('Please select a file!');
+              return;
+            }
+
+            var file = files[0];
+            var start = 0;
+            var stop = file.size - 1;
+
+            var reader = new FileReader();
+            reader.readAsText(file, "UTF-8");
+
+            reader.onloadend = function (evt) {
+                var fileContent = evt.target.result;
+                fileContent = JSON.parse(fileContent);
+                $("#maze").html("");
+                $(".json_btn").hide();
+                generateMaze(fileContent.width, fileContent.height);
+                cells.each(function(i){
+                    var currentCell = cells[i];
+                    if (fileContent.cells[i].down == true) {
+                        $(currentCell).attr('data-down', 'true');
+                    }
+                    if (fileContent.cells[i].right == true) {
+                        $(currentCell).attr('data-right', 'true');
+                    }
+                    $(currentCell).attr('data-value','0');
+                    $('.cells').html('');
+                });
+                $(".json_btn").show();
+            }
+
+            reader.onerror = function (evt) {
+                document.getElementById("fileContents").innerHTML = "error reading file";
+                return "error";
+            }
         }
     });
 </script>
