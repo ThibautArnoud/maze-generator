@@ -37,7 +37,7 @@
             var randomNumber = parseInt(getRandomArbitrary(0, width*height));
             var randomDir = direction[parseInt(getRandomArbitrary(0,4))];
             var cell = cells[randomNumber];
-            console.log(cell);
+
             if ((randomNumber < width && randomDir == -width)
                     || (randomNumber >= cells.length - width && randomDir == width)
                     || (randomNumber == cells.length - 1 && randomDir == 1)
@@ -48,9 +48,7 @@
                 return false;
             }else{
                 var nextCell = cells[randomNumber + randomDir];
-                console.log(randomNumber);
-                console.log(randomDir);
-                console.log(nextCell);
+
 
                 if(cell.value != nextCell.value){
                     switch (randomDir){
@@ -67,27 +65,38 @@
                             cell.down = true;
                             break;
                     }
+                    var saveValue;
                     if(cell.value > nextCell.value){
-                        cells.filter(function( obj ) {
-                            if(obj.value == cell.value){
-                                obj.value = nextCell.value;
+                        saveValue = cell.value;
+                        for(var j = 0; j < cells.length; j++){
+                            console.log(nextCell.value);
+                            console.log(cell.value);
+                            console.log(cells[j].value);
+                            if(cells[j].value == saveValue){
+                                console.log('ok');
+                                cells[j].value = nextCell.value;
                             }
-                        });
-                    }else{
-                        cells.filter(function( obj ) {
-                            if(obj.value == nextCell.value){
-                                obj.value = cell.value;
+                        }
+                    }else if(nextCell.value > cell.value){
+                        saveValue = nextCell.value;
+                        for(var k = 0; k < cells.length; k++){
+                            console.log(cell.value);
+                            console.log(nextCell.value);
+                            console.log(cells[k].value);
+                            if(cells[k].value == saveValue){
+                                cells[k].value = cell.value;
+                                console.log('ok');
                             }
-                        });
+                        }
                     }
                 }
             }
 
             console.log('---------');
             var result = cells.filter(function( obj ) {
-                return obj.value > 0;
+                return obj.value == 0;
             });
-            if(result == 0){
+            if(result.length == cells.length){
                 stopInterval();
                 generateJson();
                 drawMaze();
