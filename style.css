@@ -26,3 +26,5 @@
 .cells[data-right="false"]{
     border-right-style: solid;
 }
+
+.json_btn{display: none;}
