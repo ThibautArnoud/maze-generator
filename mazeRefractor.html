@@ -96,10 +96,11 @@
             var result = cells.filter(function( obj ) {
                 return obj.value == 0;
             });
+
+            drawMaze();
             if(result.length == cells.length){
                 stopInterval();
                 generateJson();
-                drawMaze();
             }
         }
 
@@ -126,6 +127,7 @@
 
         function drawMaze(){
             maze.css("width", width*40);
+            maze.html('');
             for(var i = 0; i < cells.length; i++){
                 $('<div class="cells" data-down="'+cells[i].down+'" data-right="'+cells[i].right+'" data-value="'+cells[i].value+'">'+cells[i].value+'</div>').appendTo(maze);
             }
