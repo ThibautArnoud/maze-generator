@@ -120,8 +120,11 @@
 
 
         function generateJson(){
-            var json = { "cells" : []};
-            var cells = [];
+            var json = {
+                "width" : width,
+                "height" : height,
+                "cells" : cells
+            };
 
             $.extend(json.cells, cells);
             json = JSON.stringify(json);
@@ -192,10 +195,12 @@
 
             reader.onloadend = function (evt) {
                 var fileContent = evt.target.result;
+                console.log(fileContent);
                 fileContent = JSON.parse(fileContent);
                 $("#maze").html("");
                 $(".json_btn").hide();
                 generateMaze(fileContent.width, fileContent.height);
+                cells = fileContent.cells;
                 drawMaze();
                 $(".json_btn").show();
             };
