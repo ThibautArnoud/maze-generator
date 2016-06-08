@@ -137,6 +137,7 @@
                 link.style.display = 'block';
             }, false);
 
+            $(".json_btn").show();
         }
 
         function drawMaze(){
@@ -158,13 +159,14 @@
             return Math.random() * (max - min) + min;
         }
 
-        document.getElementById('random').addEventListener('click', function(evt) {
-            maze.html('');
+        $('#random').click(function() {
             $(".json_btn").hide();
+            cells = [];
+            maze.css("width", width*40);
+            maze.html('');
             generateMaze(4,4);
             loop();
-            $(".json_btn").show();
-        }, false);
+        });
 
         document.querySelector('.readBytesButtons').addEventListener('click', function(evt) {
             if (evt.target.tagName.toLowerCase() == 'button') {
