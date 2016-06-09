@@ -9,7 +9,7 @@
 <div>
     <button id="random">Generate Random Maze</button>
 </div>
-
+<button id="resolve">Resolve maze</button>
 <div>
     <input type="file" name="fileToUpload" id="fileToUpload">
     <span class="readBytesButtons">
@@ -84,37 +84,29 @@
                     if(cell.value > nextCell.value){
                         saveValue = cell.value;
                         for(var j = 0; j < cells.length; j++){
-                            console.log(nextCell.value);
-                            console.log(cell.value);
-                            console.log(cells[j].value);
                             if(cells[j].value == saveValue){
-                                console.log('ok');
                                 cells[j].value = nextCell.value;
                             }
                         }
                     }else if(nextCell.value > cell.value){
                         saveValue = nextCell.value;
                         for(var k = 0; k < cells.length; k++){
-                            console.log(cell.value);
-                            console.log(nextCell.value);
-                            console.log(cells[k].value);
                             if(cells[k].value == saveValue){
                                 cells[k].value = cell.value;
-                                console.log('ok');
                             }
                         }
                     }
                 }
             }
 
-            console.log('---------');
             var result = cells.filter(function( obj ) {
                 return obj.value == 0;
             });
-            drawMaze();
+            console.log('une boucle');
             if(result.length == cells.length){
                 stopInterval();
                 generateJson();
+                drawMaze();
             }
         }
 
@@ -147,11 +139,16 @@
             maze.css("width", width*40);
             maze.html('');
             for(var i = 0; i < cells.length; i++){
-                $('<div class="cells" data-down="'+cells[i].down+'" data-right="'+cells[i].right+'" data-value="'+cells[i].value+'">'+cells[i].value+'</div>').appendTo(maze);
+                if(cells[i].close == true){
+                    var clas = 'close';
+                }else{
+                    var clas = 'open';
+                }
+                $('<div class="cells '+clas+'" data-down="'+cells[i].down+'" data-right="'+cells[i].right+'" data-value="'+cells[i].value+'">'+cells[i].value+'</div>').appendTo(maze);
             }
         }
         function loop(){
-            intervalId = setInterval(selectCell, 100);
+            intervalId = setInterval(selectCell, 1);
         }
 
         function stopInterval(){
@@ -161,6 +158,186 @@
         function getRandomArbitrary(min, max) {
             return Math.random() * (max - min) + min;
         }
+
+
+        function resolveMaze(){
+            var openWall = [];
+            for(var i = 0; i < cells.length; i++){
+
+                console.log('-------------');
+
+                var cellChecked = cells[i];
+                var cellTop = cells[i-width];
+                var cellLeft = cells[i-1];
+
+                if(cellChecked.close != true) {
+                    if (i == 0) {
+                        console.log('départ')
+                    } else if (i == cells.length - 1) {
+                        console.log('arrivée');
+                    } else if (i < width && (i + 1) % width == 0) {
+                        console.log('coin droit');
+
+                        if (cellChecked.down) {
+                            cellChecked.openWall = "down";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellLeft.right) {
+                            cellLeft.openWall = "right";
+                            openWall.push(cellLeft);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+
+                    } else if (i % width == 0 && i > cells.length - width - 1) {
+                        console.log('coin gauche');
+
+                        if (cellChecked.right) {
+                            cellChecked.openWall = "right";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellTop.down) {
+                            cellTop.openWall = "down";
+                            openWall.push(cellTop);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+
+                    } else if (i < width) {
+                        console.log('1ere ligne');
+
+                        if (cellChecked.down) {
+                            cellChecked.openWall = "down";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellChecked.right) {
+                            cellChecked.openWall = "right";
+
+                            openWall.push(cellChecked);
+                        }
+                        if (cellLeft.right) {
+                            cellLeft.openWall = "right";
+                            openWall.push(cellLeft);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+
+                    } else if (i % width == 0) {
+                        console.log('1ere colonne');
+
+                        if (cellChecked.down) {
+                            cellChecked.openWall = "down";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellChecked.right) {
+                            cellChecked.openWall = "right";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellTop.down) {
+                            cellTopopenWall = "down";
+                            openWall.push(cellTop);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                            break;
+                        }
+
+                    } else if ((i + 1) % width == 0) {
+                        console.log('dernière colonne');
+
+                        if (cellChecked.down) {
+                            cellChecked.openWall = "down";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellTop.down) {
+                            cellTop.openWall = "down";
+                            openWall.push(cellTop);
+                        }
+                        if (cellLeft.right) {
+                            cellLeft.openWall = "right";
+                            openWall.push(cellLeft);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+
+                    } else if (i > cells.length - width - 1) {
+                        console.log('dernière ligne');
+
+                        if (cellChecked.right) {
+                            cellChecked.openWall = "right";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellTop.down) {
+                            cellTop.openWall = "down";
+                            openWall.push(cellTop);
+                        }
+                        if (cellLeft.right) {
+                            cellLeft.openWall = "right";
+                            openWall.push(cellLeft);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+
+                    } else {
+                        console.log('le reste');
+
+                        if (cellChecked.down) {
+                            cellChecked.openWall = "down";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellChecked.right) {
+                            cellChecked.openWall = "right";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellTop.down) {
+                            cellTop.openWall = "down";
+                            openWall.push(cellTop);
+                        }
+                        if (cellLeft.right) {
+                            cellLeft.openWall = "right";
+                            openWall.push(cellLeft);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+                    }
+                }
+                console.log(openWall);
+                console.log(i);
+                openWall = [];
+                drawMaze();
+            }
+        }
+
+        $('#resolve').click(function(){
+           resolveMaze();
+        });
 
         $('#random').click(function() {
             $(".json_btn").hide();
@@ -174,13 +351,11 @@
         document.querySelector('.readBytesButtons').addEventListener('click', function(evt) {
             if (evt.target.tagName.toLowerCase() == 'button') {
                 var file = readBlob();
-                console.log(file);
             }
         }, false);
 
         function readBlob() {
             var files = document.getElementById('fileToUpload').files;
-            console.log(files);
             if (!files.length) {
                 alert('Please select a file!');
                 return;
@@ -195,7 +370,6 @@
 
             reader.onloadend = function (evt) {
                 var fileContent = evt.target.result;
-                console.log(fileContent);
                 fileContent = JSON.parse(fileContent);
                 $("#maze").html("");
                 $(".json_btn").hide();
