@@ -28,3 +28,7 @@
 }
 
 .json_btn{display: none;}
+
+.close{
+    background-color: gray;
+}
