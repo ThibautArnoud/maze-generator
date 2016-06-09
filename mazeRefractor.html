@@ -246,7 +246,7 @@
                             openWall.push(cellChecked);
                         }
                         if (cellTop.down) {
-                            cellTopopenWall = "down";
+                            cellTop.openWall = "down";
                             openWall.push(cellTop);
                         }
                         if (openWall.length < 2) {
@@ -344,7 +344,7 @@
             cells = [];
             maze.css("width", width*40);
             maze.html('');
-            generateMaze(4,4);
+            generateMaze(10,10);
             loop();
         });
 
