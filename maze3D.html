@@ -243,35 +243,35 @@
                 var material = new THREE.MeshLambertMaterial( { map: map, side: THREE.DoubleSide } );
                 //
                 var width = wth*100;
-                var height = hgt*100;
+                var height = hgt*2*100;
                 var heightHalf = hgt*100/2;
                 //
-                object = new THREE.Mesh( new THREE.BoxGeometry( 50, 50, width ), material );
-                object.position.set( 0, 0, 0 );
+                object = new THREE.Mesh( new THREE.BoxGeometry( 50, 50, width*2 ), material );
+                object.position.set( -50, 0, 0 );
                 scene.add( object );
 
-                object = new THREE.Mesh( new THREE.BoxGeometry( 50, 50, width ), material );
-                object.position.set( width, 0, 0 );
-                scene.add( object );
-
-                object = new THREE.Mesh( new THREE.BoxGeometry( height, 50, 50), material );
-                object.position.set( heightHalf, 0, heightHalf );
+                object = new THREE.Mesh( new THREE.BoxGeometry( 50, 50, width*2 ), material );
+                object.position.set( width+50, 0, 0 );
                 scene.add( object );
 
                 object = new THREE.Mesh( new THREE.BoxGeometry( height, 50, 50), material );
-                object.position.set( heightHalf, 0, -heightHalf );
+                object.position.set( heightHalf+50, 0, heightHalf+50 );
+                scene.add( object );
+
+                object = new THREE.Mesh( new THREE.BoxGeometry( height, 50, 50), material );
+                object.position.set( heightHalf+50, 0, -heightHalf-50 );
                 scene.add( object );
 
                 cells.each(function(i){
                     if(i < wth){
                         if ($(cells[i]).attr('data-down') == "false") {
                             object = new THREE.Mesh( new THREE.BoxGeometry( 50, 50, 10), material );
-                            object.position.set( 0, 0, 50 );
+                            object.position.set( -width/2, 0, (i+1)*50 );
                             scene.add( object );
                         }
                         if ($(cells[i]).attr('data-right')== "false") {
                             object = new THREE.Mesh( new THREE.BoxGeometry( 10, 50, 50), material );
-                            object.position.set( 50, 0, 0 );
+                            object.position.set( (i+1)*50, 0, 0 );
                             scene.add( object );
                         }
                     }
