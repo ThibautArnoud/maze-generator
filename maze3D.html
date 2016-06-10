@@ -222,7 +222,7 @@
             var camera, scene, renderer;
 
             document.getElementById('create3D').addEventListener('click', function(evt) {
-                init(5,5);
+                init(5, 5);
                 animate();
             }, false);
 
@@ -263,16 +263,18 @@
                 scene.add( object );
 
                 cells.each(function(i){
-                    console.log(cells[i].down);
-                    /*var currentCell = cells[i];
-                    if (fileContent.cells[i].down == true) {
-                        $(currentCell).attr('data-down', 'true');
+                    if(i < wth){
+                        if ($(cells[i]).attr('data-down') == "false") {
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 50, 50, 10), material );
+                            object.position.set( 0, 0, 50 );
+                            scene.add( object );
+                        }
+                        if ($(cells[i]).attr('data-right')== "false") {
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 10, 50, 50), material );
+                            object.position.set( 50, 0, 0 );
+                            scene.add( object );
+                        }
                     }
-                    if (fileContent.cells[i].right == true) {
-                        $(currentCell).attr('data-right', 'true');
-                    }
-                    $(currentCell).attr('data-value','0');
-                    $('.cells').html('');*/
                 });
 
 
