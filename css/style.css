@@ -81,7 +81,7 @@ div{
     background-color: gray;
 }
 
-a#downloadlink{
+a{
     height: 40px;
     line-height: 40px;
     background-color: #cf0c0c;
@@ -96,4 +96,13 @@ a#downloadlink{
 
 canvas{
     margin: 0 auto;
+}
+
+.links{
+    text-align: center;
+    width: 100%;
+}
+
+.links a{
+    display: block;
 }
