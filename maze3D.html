@@ -3,35 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="style.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 </head>
 <body>
-<div>
+<h1>The Maze</h1>
+<div class="random">
     <button id="random">Generate Random Maze</button>
 </div>
 
-<div>
+<div class="file">
     <input type="file" name="fileToUpload" id="fileToUpload">
     <span class="readBytesButtons">
         <button>Generate Uploaded Maze</button>
     </span>
 </div>
 <div id="maze"></div>
-<div class="json_btn">
+<div class="json_btn gen_json">
     <button id="create">Generate JSON</button> <a id="downloadlink" style="display: none">Download</a>
 </div>
 <div class="json_btn">
-    <button id="create3D">Generate 3D</button>
+    <button id="create3D">Generate 3D Maze</button>
+    <button id="create3D">Resolve 3D Maze</button>
 </div>
-<div id="byte_range"></div>
-<div id="byte_content"></div>
-<div id="fileContents"></div>
-<script src="jquery-2.2.4.min.js" type="text/javascript"></script>
-<!--<script src="maze.js" type="text/javascript"></script>-->
-<script src="Three.min.js"></script>
 
-        <script src="Detector.js"></script>
-        <script src="stats.min.js"></script>
+<script src="js/jquery-2.2.4.min.js" type="text/javascript"></script>
+<script src="js/Three.min.js"></script>
+<script src="js/Detector.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
 
@@ -237,41 +235,106 @@
                 light = new THREE.DirectionalLight( 0xffffff );
                 light.position.set( 0, 1, 0 );
                 scene.add( light );
-                var map = new THREE.TextureLoader().load( 'UV_Grid_Sm.jpg' );
+                var map = new THREE.TextureLoader().load( 'images/UV_Grid_Sm.jpg' );
                 map.wrapS = map.wrapT = THREE.RepeatWrapping;
                 map.anisotropy = 16;
                 var material = new THREE.MeshLambertMaterial( { map: map, side: THREE.DoubleSide } );
                 //
                 var width = wth*100;
-                var height = hgt*2*100;
+                var height = hgt*100;
                 var heightHalf = hgt*100/2;
+                
+                object = new THREE.Mesh( new THREE.BoxGeometry( 5, 5, 5 ), material );
+                object.position.set( -10, 0, 0 );
+                scene.add( object );
                 //
-                object = new THREE.Mesh( new THREE.BoxGeometry( 50, 50, width*2 ), material );
-                object.position.set( -50, 0, 0 );
+                object = new THREE.Mesh( new THREE.BoxGeometry( 10, 10, width-100 ), material );
+                object.position.set( 0, 0, -50 );
                 scene.add( object );
 
-                object = new THREE.Mesh( new THREE.BoxGeometry( 50, 50, width*2 ), material );
-                object.position.set( width+50, 0, 0 );
+                object = new THREE.Mesh( new THREE.BoxGeometry( 10, 10, width-100 ), material );
+                object.position.set( width, 0, 50 );
                 scene.add( object );
 
-                object = new THREE.Mesh( new THREE.BoxGeometry( height, 50, 50), material );
-                object.position.set( heightHalf+50, 0, heightHalf+50 );
+                object = new THREE.Mesh( new THREE.BoxGeometry( height, 10, 10), material );
+                object.position.set( heightHalf, 0, heightHalf );
                 scene.add( object );
 
-                object = new THREE.Mesh( new THREE.BoxGeometry( height, 50, 50), material );
-                object.position.set( heightHalf+50, 0, -heightHalf-50 );
+                object = new THREE.Mesh( new THREE.BoxGeometry( height, 10, 10), material );
+                object.position.set( heightHalf, 0, -heightHalf );
                 scene.add( object );
 
                 cells.each(function(i){
+                    console.log(i);
                     if(i < wth){
                         if ($(cells[i]).attr('data-down') == "false") {
-                            object = new THREE.Mesh( new THREE.BoxGeometry( 50, 50, 10), material );
-                            object.position.set( -width/2, 0, (i+1)*50 );
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 100, 10, 10), material );
+                            object.position.set( 50+(i*100), 0, 150 );
                             scene.add( object );
                         }
                         if ($(cells[i]).attr('data-right')== "false") {
-                            object = new THREE.Mesh( new THREE.BoxGeometry( 10, 50, 50), material );
-                            object.position.set( (i+1)*50, 0, 0 );
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 10, 10, 100), material );
+                            object.position.set( (i+1)*100, 0, 200 );
+                            scene.add( object );
+                        }
+                    } 
+
+                    else if(i < (2*wth)){
+                        if ($(cells[i]).attr('data-down') == "false") {
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 100, 10, 10), material );
+                            object.position.set( 50+(i*100)-500, 0, 50 );
+                            scene.add( object );
+                        }
+                        if ($(cells[i]).attr('data-right')== "false") {
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 10, 10, 100), material );
+                            object.position.set( (i+1)*100 - 500, 0, 100 );
+                            scene.add( object );
+                        }
+                    }
+
+                    else if(i < (3*wth)){
+                        if ($(cells[i]).attr('data-down') == "false") {
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 100, 10, 10), material );
+                            object.position.set( 50+(i*100)-1000, 0, -50 );
+                            scene.add( object );
+                        }
+                        if ($(cells[i]).attr('data-right')== "false") {
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 10, 10, 100), material );
+                            object.position.set( (i+1)*100 - 1000, 0, 0 );
+                            scene.add( object );
+                        }
+                    }
+
+                    else if(i < (4*wth)){
+                        if ($(cells[i]).attr('data-down') == "false") {
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 100, 10, 10), material );
+                            object.position.set( 50+(i*100)-1500, 0, -150 );
+                            scene.add( object );
+                        }
+                        if ($(cells[i]).attr('data-right')== "false") {
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 10, 10, 100), material );
+                            object.position.set( (i+1)*100 - 1500, 0, -100 );
+                            scene.add( object );
+                        }
+                    }
+
+                    else if(i < (5*wth-1)){
+                        if ($(cells[i]).attr('data-down') == "false") {
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 100, 10, 10), material );
+                            object.position.set( 50+(i*100)-2000, 0, -250 );
+                            scene.add( object );
+                        }
+                        if ($(cells[i]).attr('data-right')== "false") {
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 10, 10, 100), material );
+                            object.position.set( (i+1)*100 - 2000, 0, -200 );
+                            scene.add( object );
+                        }
+                    }
+
+                    else if(i < (5*wth)){
+                        if ($(cells[i]).attr('data-down') == "false") {
+                            object = new THREE.Mesh( new THREE.BoxGeometry( 100, 10, 10), material );
+                            object.position.set( 50+(i*100)-2000, 0, -250 );
                             scene.add( object );
                         }
                     }
@@ -281,7 +344,7 @@
                 //
                 renderer = new THREE.WebGLRenderer( { antialias: true } );
                 renderer.setPixelRatio( window.devicePixelRatio );
-                renderer.setSize( window.innerWidth, window.innerHeight );
+                renderer.setSize( window.innerWidth, window.innerHeight/2 );
                 container.appendChild( renderer.domElement );
                 //
                 window.addEventListener( 'resize', onWindowResize, false );
@@ -303,6 +366,209 @@
                 camera.lookAt( scene.position );
                 renderer.render( scene, camera );
             }
+
+        /*    function drawMaze(){
+            maze.css("width", width*40);
+            maze.html('');
+            for(var i = 0; i < cells.length; i++){
+                if(cells[i].close == true){
+                    var clas = 'close';
+                }else{
+                    var clas = 'open';
+                }
+                $('<div class="cells '+clas+'" data-down="'+cells[i].down+'" data-right="'+cells[i].right+'" data-value="'+cells[i].value+'">'+cells[i].value+'</div>').appendTo(maze);
+            }
+        }
+        function loop(){
+            intervalId = setInterval(selectCell, 1);
+        }
+
+        function stopInterval(){
+            clearInterval(intervalId);
+        }
+
+        function getRandomArbitrary(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+
+        function resolveMaze(){
+            var openWall = [];
+            for(var i = 0; i < cells.length; i++){
+
+                console.log('-------------');
+
+                var cellChecked = cells[i];
+                var cellTop = cells[i-width];
+                var cellLeft = cells[i-1];
+
+                if(cellChecked.close != true) {
+                    if (i == 0) {
+                        console.log('départ')
+                    } else if (i == cells.length - 1) {
+                        console.log('arrivée');
+                    } else if (i < width && (i + 1) % width == 0) {
+                        console.log('coin droit');
+
+                        if (cellChecked.down) {
+                            cellChecked.openWall = "down";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellLeft.right) {
+                            cellLeft.openWall = "right";
+                            openWall.push(cellLeft);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+
+                    } else if (i % width == 0 && i > cells.length - width - 1) {
+                        console.log('coin gauche');
+
+                        if (cellChecked.right) {
+                            cellChecked.openWall = "right";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellTop.down) {
+                            cellTop.openWall = "down";
+                            openWall.push(cellTop);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+
+                    } else if (i < width) {
+                        console.log('1ere ligne');
+
+                        if (cellChecked.down) {
+                            cellChecked.openWall = "down";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellChecked.right) {
+                            cellChecked.openWall = "right";
+
+                            openWall.push(cellChecked);
+                        }
+                        if (cellLeft.right) {
+                            cellLeft.openWall = "right";
+                            openWall.push(cellLeft);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+
+                    } else if (i % width == 0) {
+                        console.log('1ere colonne');
+
+                        if (cellChecked.down) {
+                            cellChecked.openWall = "down";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellChecked.right) {
+                            cellChecked.openWall = "right";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellTop.down) {
+                            cellTop.openWall = "down";
+                            openWall.push(cellTop);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+
+                    } else if ((i + 1) % width == 0) {
+                        console.log('dernière colonne');
+
+                        if (cellChecked.down) {
+                            cellChecked.openWall = "down";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellTop.down) {
+                            cellTop.openWall = "down";
+                            openWall.push(cellTop);
+                        }
+                        if (cellLeft.right) {
+                            cellLeft.openWall = "right";
+                            openWall.push(cellLeft);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+
+                    } else if (i > cells.length - width - 1) {
+                        console.log('dernière ligne');
+
+                        if (cellChecked.right) {
+                            cellChecked.openWall = "right";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellTop.down) {
+                            cellTop.openWall = "down";
+                            openWall.push(cellTop);
+                        }
+                        if (cellLeft.right) {
+                            cellLeft.openWall = "right";
+                            openWall.push(cellLeft);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+
+                    } else {
+                        console.log('le reste');
+
+                        if (cellChecked.down) {
+                            cellChecked.openWall = "down";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellChecked.right) {
+                            cellChecked.openWall = "right";
+                            openWall.push(cellChecked);
+                        }
+                        if (cellTop.down) {
+                            cellTop.openWall = "down";
+                            openWall.push(cellTop);
+                        }
+                        if (cellLeft.right) {
+                            cellLeft.openWall = "right";
+                            openWall.push(cellLeft);
+                        }
+                        if (openWall.length < 2) {
+                            console.log(openWall);
+                            openWall[0][openWall[0].openWall] = false;
+                            cellChecked.close = true;
+                            console.log('Cul de sac');
+                        }
+                    }
+                }
+                console.log(openWall);
+                console.log(i);
+                openWall = [];
+                drawMaze();
+            }
+        }
+
+        $('#resolve').click(function(){
+           resolveMaze();
+        });*/
     });
 </script>
 </body>
